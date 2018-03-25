@@ -7,6 +7,7 @@ import lombok.Data;
 @Builder
 public class ReceiveEmailDto {
 
+    private String recipient;
     private String from;
     private String text;
 }

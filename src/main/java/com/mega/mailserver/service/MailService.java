@@ -40,7 +40,7 @@ public class MailService {
         email.setTo(recipients);
         email.setMsg(message.getText());
         email.send();
-        log.info("{} sended mail to [{}]", message.getSender(), recipients);
+        log.info("[{}] sent mail to {}", message.getSender(), recipients);
     }
 
     @RabbitListener(queues = "haraka.emails")
