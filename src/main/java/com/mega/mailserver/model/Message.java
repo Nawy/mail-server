@@ -14,7 +14,7 @@ public class Message {
     @Id
     private String id;
     private String senderEmail;
-    private String recipientEmail;
+    private String recipient;
     private String text;
     private LocalDateTime time;
 }
