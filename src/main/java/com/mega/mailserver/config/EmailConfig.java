@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class EmailConfig {
 
-    @Value("${email.domain")
+    @Value("${email.domain}")
     private String domain;
 
     @Value("${email.smtp.host}")
@@ -24,7 +24,7 @@ public class EmailConfig {
     @Value("${email.smtp.username}")
     private String username;
 
-    @Value("${email.smtp.username}")
+    @Value("${email.smtp.password}")
     private String password;
 
     public Email getEmail(final String sender, final String fullName) {

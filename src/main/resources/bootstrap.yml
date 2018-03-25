@@ -18,7 +18,7 @@ email:
   domain: ermolaev.am
   smtp:
     host: 192.168.1.64
-    port: 2525
+    port: 567
     username: sendserver
     password: 13SaintMonkeys
 
