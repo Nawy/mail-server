@@ -1,0 +1,27 @@
+spring:
+
+  application:
+    name: mail-server
+
+  data:
+    mongodb:
+      database: mail
+      host: 192.168.1.64
+      port: 27017
+
+  rabbitmq:
+    host: 192.168.1.64
+    username: admin
+    password: admin
+
+email:
+  domain: ermolaev.am
+  smtp:
+    host: 192.168.1.64
+    port: 2525
+    username: sendserver
+    password: 13SaintMonkeys
+
+server:
+  port: 8081
+
