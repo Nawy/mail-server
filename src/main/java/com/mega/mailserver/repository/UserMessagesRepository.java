@@ -1,6 +1,6 @@
 package com.mega.mailserver.repository;
 
-import com.mega.mailserver.model.UserMessages;
+import com.mega.mailserver.model.domain.UserMessages;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

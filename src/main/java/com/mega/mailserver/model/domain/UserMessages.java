@@ -1,4 +1,4 @@
-package com.mega.mailserver.model;
+package com.mega.mailserver.model.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +12,7 @@ import org.springframework.util.MultiValueMap;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "userMessages")
+@Class
 public class UserMessages {
     @Id
     private String id;

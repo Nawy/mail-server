@@ -1,7 +1,7 @@
 package com.mega.mailserver.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.mega.mailserver.model.User;
+import com.mega.mailserver.model.domain.User;
 import com.mega.mailserver.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,14 +9,19 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/post")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
 
+    @PutMapping
+    public User insert(@RequestBody UserCreateDto userCreateDto) {
+        return userService.insert(userCreateDto.toUser());
+    }
+
     @PostMapping
-    public User save(@RequestBody UserCreateDto userCreateDto) {
-        return userService.save(userCreateDto.toUser());
+    public User update(@RequestBody User user) {
+        return userService.update(user);
     }
 
     @GetMapping("/{email}")

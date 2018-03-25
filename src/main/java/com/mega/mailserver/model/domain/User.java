@@ -1,4 +1,4 @@
-package com.mega.mailserver.model;
+package com.mega.mailserver.model.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
