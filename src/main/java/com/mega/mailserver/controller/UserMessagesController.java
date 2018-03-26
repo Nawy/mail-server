@@ -5,6 +5,7 @@ import com.mega.mailserver.model.domain.Message;
 import com.mega.mailserver.service.UserMessagesService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bson.types.ObjectId;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -43,6 +44,7 @@ public class UserMessagesController {
 
         Message toMessage() {
             return Message.builder()
+                    .id(ObjectId.get().toHexString())
                     .senderEmail(senderEmail)
                     .recipient(recipient)
                     .text(text)

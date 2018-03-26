@@ -7,6 +7,7 @@ import com.mega.mailserver.repository.UserMessagesRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,9 +38,17 @@ public class UserMessagesService {
         userMessagesRepository
                 .findByOwnerEmail(ownerEmail)
                 .ifPresent(userMessages -> {
-                    userMessages.getMessages().add(chatName, message);
+                    List<Message> messages = userMessages.getMessages().getOrDefault(chatName, new ArrayList<>());
+                    messages.add(message);
+                    userMessages.getMessages().put(chatName, messages);
                     userMessagesRepository.save(userMessages);
                 });
+    }
+
+    public UserMessages create(String ownerEmail) {
+        return userMessagesRepository.save(
+                UserMessages.builder().ownerEmail(ownerEmail).build()
+        );
     }
 
     public enum MessageType {

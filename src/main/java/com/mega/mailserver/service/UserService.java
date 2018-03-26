@@ -1,8 +1,10 @@
 package com.mega.mailserver.service;
 
 import com.mega.mailserver.model.domain.User;
+import com.mega.mailserver.model.domain.UserMessages;
 import com.mega.mailserver.model.exception.ForbiddenException;
 import com.mega.mailserver.model.exception.NotFoundException;
+import com.mega.mailserver.repository.UserMessagesRepository;
 import com.mega.mailserver.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserMessagesService userMessagesService;
 
     public User update(User user) {
         User oldUser = userRepository.findById(user.getId())
@@ -29,6 +32,7 @@ public class UserService {
         if (alreadyExists) {
             throw new ForbiddenException(String.format("user with such email :'%s' already exists", user.getEmail()));
         }
+        userMessagesService.create(user.getEmail());
         return userRepository.save(user);
     }
 
