@@ -14,6 +14,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
+import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
@@ -22,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 @Slf4j
@@ -44,10 +46,14 @@ public class MailService {
     }
 
     @RabbitListener(queues = "haraka.emails")
-    public void receive(final Message message) throws Exception {
+    public void receive(final Message message) {
 
         MimeMessage mimeMessage = parseMimeMessage(message);
         ReceiveEmailDto receiveEmail = parseContent(mimeMessage);
+
+        if(Objects.isNull(receiveEmail)) {
+            return;
+        }
 
         log.info("From: {}, Message: {}", receiveEmail.getFrom(), receiveEmail.getText());
     }
@@ -76,6 +82,13 @@ public class MailService {
 
         try {
             final String content = formatContent(parser);
+
+            if(Objects.isNull(content)) {
+                return null;
+            }
+
+            final List<Address> to = parser.getTo();
+            to.forEach(value -> System.out.println(value.toString()));
             return ReceiveEmailDto.builder()
                     .from(parser.getFrom())
                     .text(content)
@@ -87,11 +100,12 @@ public class MailService {
     }
 
     private String formatContent(final MimeMessageParser parser) {
-        if (StringUtils.isBlank(parser.getPlainContent())) {
+        if (StringUtils.isBlank(parser.getPlainContent()) && StringUtils.isNotBlank(parser.getHtmlContent())) {
             String html = parser.getHtmlContent();
             return Jsoup.clean(html, Whitelist.basic());
-        } else {
+        } else if(StringUtils.isBlank(parser.getPlainContent())) {
             return parser.getPlainContent();
         }
+        return null;
     }
 }
