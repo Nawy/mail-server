@@ -55,6 +55,7 @@ public class MailService {
             return;
         }
 
+        // TODO save
         log.info("From: {}, Message: {}", receiveEmail.getFrom(), receiveEmail.getText());
     }
 
@@ -81,7 +82,7 @@ public class MailService {
         }
 
         try {
-            final String content = formatContent(parser);
+            final String content = cleanContent(parser);
 
             if(Objects.isNull(content)) {
                 return null;
@@ -99,7 +100,7 @@ public class MailService {
         }
     }
 
-    private String formatContent(final MimeMessageParser parser) {
+    private String cleanContent(final MimeMessageParser parser) {
         if (StringUtils.isBlank(parser.getPlainContent()) && StringUtils.isNotBlank(parser.getHtmlContent())) {
             String html = parser.getHtmlContent();
             return Jsoup.clean(html, Whitelist.basic());
