@@ -36,7 +36,7 @@ public class MailService {
     public void send(final SendEmailDto message) throws Exception {
         Email email = emailConfig.getEmail(message.getSender(), message.getFullName());
 
-        final String recipientString = String.join(",",message.getTo());
+        final String recipientString = String.join(",", message.getTo());
         final List<InternetAddress> recipients = Arrays.asList(InternetAddress.parse(recipientString));
 
         email.setTo(recipients);
@@ -51,7 +51,7 @@ public class MailService {
         MimeMessage mimeMessage = parseMimeMessage(message);
         ReceiveEmailDto receiveEmail = parseContent(mimeMessage);
 
-        if(Objects.isNull(receiveEmail)) {
+        if (Objects.isNull(receiveEmail)) {
             return;
         }
 
@@ -81,9 +81,9 @@ public class MailService {
             throw new RuntimeException(e);
         }
 
-        final String content = cleanContent(parser);
+        final String content = cleanContent(parser.getHtmlContent(), parser.getPlainContent());
 
-        if(Objects.isNull(content)) {
+        if (Objects.isNull(content)) {
             return null;
         }
 
@@ -103,17 +103,18 @@ public class MailService {
         }
 
         return ReceiveEmailDto.builder()
+                .recipients(to)
                 .from(from)
                 .text(content)
                 .build();
     }
 
-    private String cleanContent(final MimeMessageParser parser) {
-        if (StringUtils.isBlank(parser.getPlainContent()) && StringUtils.isNotBlank(parser.getHtmlContent())) {
-            String html = parser.getHtmlContent();
-            return Jsoup.clean(html, Whitelist.basic());
-        } else if(StringUtils.isBlank(parser.getPlainContent())) {
-            return parser.getPlainContent();
+    private String cleanContent(final String htmlContent, final String plainContent) {
+
+        if (StringUtils.isBlank(plainContent) && StringUtils.isNotBlank(htmlContent)) {
+            return Jsoup.clean(htmlContent, Whitelist.basic());
+        } else if (StringUtils.isBlank(plainContent)) {
+            return plainContent;
         }
         return null;
     }
