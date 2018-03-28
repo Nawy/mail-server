@@ -14,6 +14,14 @@ spring:
     username: admin
     password: admin
 
+  mail:
+    host: 192.168.1.64
+    port: 567
+    username: sendserver
+    password: 13SaintMonkeys
+    properties:
+      - mail.smtp.auth: true
+
 email:
   domain: ermolaev.am
   smtp:
@@ -21,6 +29,11 @@ email:
     port: 567
     username: sendserver
     password: 13SaintMonkeys
+
+
+spring.mail.properties.mail.smtp.connectiontimeout=5000
+spring.mail.properties.mail.smtp.timeout=3000
+spring.mail.properties.mail.smtp.writetimeout=5000
 
 server:
   port: 8081

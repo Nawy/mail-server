@@ -81,23 +81,31 @@ public class MailService {
             throw new RuntimeException(e);
         }
 
+        final String content = cleanContent(parser);
+
+        if(Objects.isNull(content)) {
+            return null;
+        }
+
+        List<Address> to;
         try {
-            final String content = cleanContent(parser);
+            to = parser.getTo();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-            if(Objects.isNull(content)) {
-                return null;
-            }
-
-            final List<Address> to = parser.getTo();
-            to.forEach(value -> System.out.println(value.toString()));
-            return ReceiveEmailDto.builder()
-                    .from(parser.getFrom())
-                    .text(content)
-                    .build();
+        String from;
+        try {
+            from = parser.getFrom();
         } catch (Exception e) {
             log.error("Cannot get parsed email content", e);
             throw new RuntimeException(e);
         }
+
+        return ReceiveEmailDto.builder()
+                .from(from)
+                .text(content)
+                .build();
     }
 
     private String cleanContent(final MimeMessageParser parser) {
