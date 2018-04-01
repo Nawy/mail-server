@@ -1,47 +1,59 @@
 package com.mega.mailserver.controller;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mega.mailserver.model.domain.User;
+import com.mega.mailserver.model.dto.UserDto;
+import com.mega.mailserver.model.exception.BadRequestException;
+import com.mega.mailserver.model.exception.ForbiddenException;
+import com.mega.mailserver.model.exception.NotFoundException;
 import com.mega.mailserver.service.UserService;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
 
     @PutMapping
-    public User insert(@RequestBody UserCreateDto userCreateDto) {
-        return userService.insert(userCreateDto.toUser());
+    public UserDto insert(@RequestBody User user) {
+        final User existedUser = userService.get(user.getName());
+
+        if (Objects.isNull(existedUser)) {
+            throw new ForbiddenException(String.format("user with such email :'%s' already exists", user.getName()));
+        }
+        final User resultUser = userService.upsert(user);
+        return UserDto.valueOf(resultUser);
     }
 
     @PostMapping
-    public User update(@RequestBody User user) {
-        return userService.update(user);
+    public UserDto update(@RequestBody User user) {
+        final User existedUser = userService.get(user.getName());
+
+        if (Objects.isNull(existedUser)) {
+            throw new NotFoundException("No user found for id: " + user.getId());
+        }
+        final User resultUser = userService.upsert(user);
+        return UserDto.valueOf(resultUser);
     }
 
-    @GetMapping("/{email}")
-    public User get(@PathVariable("email") String email) {
-        return userService.get(email);
-    }
-
-    @Getter
-    private static class UserCreateDto {
-        private String email;
-        private String password;
-
-        public UserCreateDto(@JsonProperty(value = "email", required = true) String email,
-                             @JsonProperty(value = "password", required = true) String password) {
-            this.email = email;
-            this.password = password;
+    @GetMapping("/{name}")
+    public UserDto get(@PathVariable("name") String name) {
+        if (StringUtils.isBlank(name)) {
+            throw new BadRequestException("Empty request");
         }
 
-        User toUser() {
-            return User.builder().email(email).password(password).build();
+        final User user = userService.get(name);
+
+        if (Objects.isNull(user)) {
+            throw new NotFoundException("cannot find user with name " + name);
         }
+
+        return UserDto.valueOf(user);
     }
 }

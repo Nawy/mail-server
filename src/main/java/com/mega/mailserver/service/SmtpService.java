@@ -3,6 +3,8 @@ package com.mega.mailserver.service;
 import com.mega.mailserver.config.EmailConfig;
 import com.mega.mailserver.model.ReceiveEmailDto;
 import com.mega.mailserver.model.SendEmailDto;
+import com.mega.mailserver.model.domain.Letter;
+import com.mega.mailserver.model.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,20 +31,22 @@ import java.util.Properties;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MailService {
+public class SmtpService {
 
     private final EmailConfig emailConfig;
+    private final MailboxService mailboxService;
+    private final UserService userService;
 
-    public void send(final SendEmailDto message) throws Exception {
-        Email email = emailConfig.getEmail(message.getSender(), message.getFullName());
+    public void send(final Letter letter, final User user) throws Exception {
+        Email email = emailConfig.getEmail(user.getName(), user.getFullName());
 
-        final String recipientString = String.join(",", message.getTo());
+        final String recipientString = String.join(",", letter.getAddress());
         final List<InternetAddress> recipients = Arrays.asList(InternetAddress.parse(recipientString));
 
         email.setTo(recipients);
-        email.setMsg(message.getText());
+        email.setMsg(letter.getText());
         email.send();
-        log.info("[{}] sent mail to {}", message.getSender(), recipients);
+        log.info("[{}] sent mail to {}", user.getName(), recipients);
     }
 
     @RabbitListener(queues = "haraka.emails")
@@ -55,8 +59,17 @@ public class MailService {
             return;
         }
 
+        final List<User> recipients = findRecipients(receiveEmail.getRecipients());
+
+        recipients.forEach(recipient -> mailboxService.put(null, recipient));
+
         // TODO save
-        log.info("From: {}, Message: {}", receiveEmail.getFrom(), receiveEmail.getText());
+        log.info("From: {}, Letter: {}", receiveEmail.getFrom(), receiveEmail.getText());
+    }
+
+    private List<User> findRecipients(final List<Address> emails) {
+        //getLetters only name
+        return null;
     }
 
     private MimeMessage parseMimeMessage(final Message message) {
@@ -98,7 +111,7 @@ public class MailService {
         try {
             from = parser.getFrom();
         } catch (Exception e) {
-            log.error("Cannot get parsed email content", e);
+            log.error("Cannot getLetters parsed email content", e);
             throw new RuntimeException(e);
         }
 

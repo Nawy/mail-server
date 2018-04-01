@@ -1,6 +1,5 @@
 package com.mega.mailserver.config;
 
-import com.mega.mailserver.model.User;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
