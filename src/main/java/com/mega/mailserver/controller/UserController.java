@@ -1,5 +1,6 @@
 package com.mega.mailserver.controller;
 
+import com.mega.mailserver.model.SecurityRole;
 import com.mega.mailserver.model.domain.User;
 import com.mega.mailserver.model.dto.UserDto;
 import com.mega.mailserver.model.exception.BadRequestException;
@@ -20,28 +21,30 @@ public class UserController {
 
     private final UserService userService;
 
-    @PutMapping
-    public UserDto insert(@RequestBody User user) {
+    @PostMapping
+    public UserDto insert(@RequestBody UserDto user) {
         final User existedUser = userService.get(user.getName());
 
-        if (Objects.isNull(existedUser)) {
+        if (Objects.nonNull(existedUser)) {
             throw new ForbiddenException(String.format("user with such email :'%s' already exists", user.getName()));
         }
-        final User resultUser = userService.upsert(user);
+        final User resultUser = userService.upsert(user.toUser());
         return UserDto.valueOf(resultUser);
     }
 
-    @PostMapping
-    public UserDto update(@RequestBody User user) {
+    @Secured(SecurityRole.USER)
+    @PutMapping
+    public UserDto update(@RequestBody UserDto user) {
         final User existedUser = userService.get(user.getName());
 
         if (Objects.isNull(existedUser)) {
-            throw new NotFoundException("No user found for id: " + user.getId());
+            throw new NotFoundException("No user found for name: " + user.getName());
         }
-        final User resultUser = userService.upsert(user);
+        final User resultUser = userService.upsert(user.toUser());
         return UserDto.valueOf(resultUser);
     }
 
+    @Secured(SecurityRole.USER)
     @GetMapping("/{name}")
     public UserDto get(@PathVariable("name") String name) {
         if (StringUtils.isBlank(name)) {

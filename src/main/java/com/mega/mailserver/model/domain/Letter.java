@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 @TypeAlias("letter")
 public class Letter {
 
+    @Indexed
     private String id;
     private String address;
     private List<String> cc;

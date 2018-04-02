@@ -62,8 +62,6 @@ public class SmtpService {
         final List<User> recipients = findRecipients(receiveEmail.getRecipients());
 
         recipients.forEach(recipient -> mailboxService.put(null, recipient));
-
-        // TODO save
         log.info("From: {}, Letter: {}", receiveEmail.getFrom(), receiveEmail.getText());
     }
 
