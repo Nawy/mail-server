@@ -1,5 +1,6 @@
 package com.mega.mailserver.config;
 
+import com.mega.mailserver.service.security.AuthEntryPoint;
 import com.mega.mailserver.service.security.AuthProvider;
 import com.mega.mailserver.service.security.AuthSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     AuthProvider authProvider;
 
     @Autowired
-    AuthenticationEntryPoint authEntryPoint;
+    AuthEntryPoint authEntryPoint;
 
     @Autowired
     AuthSuccessHandler authSuccessHandler;
