@@ -3,6 +3,7 @@ package com.mega.mailserver.config;
 import com.mega.mailserver.service.security.AuthEntryPoint;
 import com.mega.mailserver.service.security.AuthProvider;
 import com.mega.mailserver.service.security.AuthSuccessHandler;
+import com.mega.mailserver.service.security.LogoutSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,6 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .logoutUrl("/logout")
                     .deleteCookies("JSESSIONID")
                     .invalidateHttpSession(true)
+                    .logoutSuccessHandler(new LogoutSuccessHandler())
                     .and()
                 .csrf().disable()
                 .cors();

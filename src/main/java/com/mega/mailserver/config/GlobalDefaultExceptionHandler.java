@@ -28,7 +28,7 @@ public class GlobalDefaultExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler()
+    @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException exception) {
         return new ResponseEntity<>(new ErrorResponse("Unauthorized!"), HttpStatus.UNAUTHORIZED);
     }
