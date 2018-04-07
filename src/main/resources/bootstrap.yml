@@ -25,3 +25,26 @@ email:
 server:
   port: 8081
 
+---
+
+spring:
+  profiles: remote
+
+  data:
+    mongodb:
+      database: mail
+      host: 192.168.1.64
+      port: 27017
+
+  rabbitmq:
+    host: 192.168.200.1
+    username: admin
+    password: admin
+
+email:
+  domain: ermolaev.am
+  smtp:
+    host: 192.168.200.1
+    port: 567
+    username: sendserver
+    password: 13SaintMonkeys
