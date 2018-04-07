@@ -24,7 +24,4 @@ public class User {
     private String password;
     private String phoneNumber;
     private String fullName;
-
-    @DBRef(lazy = true)
-    private Mailbox mailbox;
 }

@@ -24,8 +24,6 @@ import java.util.Map;
 @Document(collection = "mailbox")
 public class Mailbox {
     @Id
-    private String id;
-    @Indexed
     private String userName;
 
     @Builder.Default private Multimap<String, Letter> letters = HashMultimap.create();

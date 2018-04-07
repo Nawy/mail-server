@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import javax.mail.Address;
+import javax.mail.internet.InternetAddress;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,9 +14,9 @@ import java.util.stream.Collectors;
 @Builder
 public class ReceiveEmailDto {
 
-    private List<Address> recipients;
-    private List<Address> cc;
-    private List<Address> bcc;
+    private List<InternetAddress> recipients;
+    private List<InternetAddress> cc;
+    private List<InternetAddress> bcc;
     private String from;
     private String text;
 

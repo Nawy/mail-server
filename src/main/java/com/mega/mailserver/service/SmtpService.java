@@ -24,6 +24,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -58,15 +59,15 @@ public class SmtpService {
 
         final List<User> recipients = findRecipients(receiveEmail.getRecipients());
 
-        recipients.forEach(recipient -> mailboxService.put(receiveEmail.toLetter(), recipient));
+        recipients.forEach(recipient -> mailboxService.put(receiveEmail.toLetter(), recipient.getName()));
         log.info("From: {}, Letter: {}", receiveEmail.getFrom(), receiveEmail.getText());
     }
 
-    private List<User> findRecipients(final List<Address> emails) {
+    private List<User> findRecipients(final List<InternetAddress> emails) {
 
         final List<User> users = new ArrayList<>();
-        for (Address address : emails) {
-            final String addr = address.toString();
+        for (InternetAddress address : emails) {
+            final String addr = address.getAddress();
             final User user = userService.get(addr.substring(0, addr.indexOf("@")));
             if (Objects.nonNull(user)) {
                 users.add(user);
@@ -120,7 +121,7 @@ public class SmtpService {
         }
 
         return ReceiveEmailDto.builder()
-                .recipients(to)
+                .recipients(to.stream().map(addr -> (InternetAddress)addr).collect(Collectors.toList()))
                 .from(from)
                 .text(content)
                 .build();

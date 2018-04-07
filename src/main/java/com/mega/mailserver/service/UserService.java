@@ -16,10 +16,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void save(User user) {
-        userRepository.save(user);
-    }
-
     public User upsert(User user) {
         final String encodedPassword = passwordEncoder.encode(user.getPassword());
 

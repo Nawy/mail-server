@@ -23,6 +23,9 @@ public class UserController {
 
     @PostMapping
     public UserDto insert(@RequestBody UserDto user) {
+        if(StringUtils.isBlank(user.getName())) {
+            throw new BadRequestException("Name is empty");
+        }
         final User existedUser = userService.get(user.getName());
 
         if (Objects.nonNull(existedUser)) {

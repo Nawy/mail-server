@@ -1,11 +1,14 @@
 package com.mega.mailserver.service;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.mega.mailserver.model.domain.Letter;
 import com.mega.mailserver.model.domain.Mailbox;
 import com.mega.mailserver.model.domain.User;
 import com.mega.mailserver.repository.MailboxRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -18,46 +21,48 @@ public class MailboxService {
     private final UserService userService;
     private final MailboxRepository mailboxRepository;
 
-    public Collection<Letter> getConversation(final User user, final String address) {
+    public Collection<Letter> getConversation(final String userName, final String address) {
 
-        final Mailbox mailbox = user.getMailbox();
+        final Mailbox mailbox = mailboxRepository.findById(userName).orElseGet(null);
 
         Collection<Letter> conversation = mailbox.getLetters().get(address);
 
-        if(Objects.isNull(conversation)) {
+        if(CollectionUtils.isEmpty(conversation)) {
             conversation = mailbox.getSpam().get(address);
         }
 
         return Objects.isNull(conversation) ? Collections.emptyList() : conversation;
     }
 
-    public Collection<Letter> getLetters(final User user) {
-        return user.getMailbox().getLetters().values();
+    public Collection<Letter> getLetters(final String userName) {
+        final Mailbox mailbox = mailboxRepository.findById(userName).orElseGet(null);
+        return Objects.isNull(mailbox) ? Collections.emptyList() : mailbox.getLetters().values();
     }
 
-    public Collection<Letter> getSpam(final User user) {
-        return user.getMailbox().getSpam().values();
+    public Collection<Letter> getSpam(final String userName) {
+        final Mailbox mailbox = mailboxRepository.findById(userName).orElseGet(null);
+        return Objects.isNull(mailbox) ? Collections.emptyList() : mailbox.getSpam().values();
     }
 
-    public void put(final Letter letter, final User user) {
+    public void put(final Letter letter, final String userName) {
         Objects.requireNonNull(letter);
 
-        final Mailbox mailbox = firstNonNull(
-                user.getMailbox(),
-                Mailbox.builder()
-                        .userName(user.getName())
-                        .build()
-        );
+        final Mailbox mailbox = mailboxRepository.findById(userName)
+                .orElseGet(() -> Mailbox.builder().userName(userName).build());
+
         final String address = letter.getAddress();
 
-        if (mailbox.getLetters().containsKey(address)) {
-            mailbox.getLetters().put(address, letter);
+        final Multimap<String, Letter> letters = firstNonNull(mailbox.getLetters(), HashMultimap.create());
+
+        if (letters.containsKey(address)) {
+            letters.put(address, letter);
+            mailbox.setLetters(letters);
         } else {
-            mailbox.getSpam().put(address, letter);
+            final Multimap<String, Letter> spam = firstNonNull(mailbox.getSpam(), HashMultimap.create());
+            spam.put(address, letter);
+            mailbox.setSpam(spam);
         }
 
         mailboxRepository.save(mailbox);
-        user.setMailbox(mailbox);
-        userService.save(user);
     }
 }

@@ -15,7 +15,7 @@ public class MongoConfig {
     public MappingMongoConverter mongoConverter(MongoDbFactory mongoFactory, MongoMappingContext mongoMappingContext) throws Exception {
         DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoFactory);
         MappingMongoConverter mongoConverter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
-        mongoConverter.setMapKeyDotReplacement("-");
+        mongoConverter.setMapKeyDotReplacement("#");
 
         return mongoConverter;
     }

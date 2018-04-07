@@ -26,18 +26,18 @@ public class MailboxController {
     @GetMapping("/{address}")
     public Collection<Letter> getConversation(@PathVariable("address") String address) {
         final User user = authService.getUser();
-        return mailboxService.getConversation(user, address);
+        return mailboxService.getConversation(user.getName(), address);
     }
 
     @GetMapping("/letters")
     public Collection<Letter> getLetters() {
         final User user = authService.getUser();
-        return mailboxService.getLetters(user);
+        return mailboxService.getLetters(user.getName());
     }
 
     @GetMapping("/spam")
     public Collection<Letter> getSpam() {
         final User user = authService.getUser();
-        return mailboxService.getSpam(user);
+        return mailboxService.getSpam(user.getName());
     }
 }

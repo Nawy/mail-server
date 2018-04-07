@@ -20,6 +20,6 @@ public class PostService {
             throw new RuntimeException("Cannot send message");
         }
 
-        mailboxService.put(letter, user);
+        mailboxService.put(letter, user.getName());
     }
 }
