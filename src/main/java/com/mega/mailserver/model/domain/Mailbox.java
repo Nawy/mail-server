@@ -28,9 +28,6 @@ public class Mailbox {
     @Indexed
     private String userName;
 
-    @DBRef(lazy = true)
-    private Multimap<String, Letter> letters = HashMultimap.create();
-
-    @DBRef(lazy = true)
-    private Multimap<String, Letter> spam = HashMultimap.create();
+    @Builder.Default private Multimap<String, Letter> letters = HashMultimap.create();
+    @Builder.Default private Multimap<String, Letter> spam = HashMultimap.create();
 }

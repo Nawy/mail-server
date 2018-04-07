@@ -18,7 +18,6 @@ public class AuthService {
     }
 
     public User getUser() {
-        final String name = (String)getAuthentication().getPrincipal();
-        return userService.get(name);
+        return (User)getAuthentication().getPrincipal();
     }
 }

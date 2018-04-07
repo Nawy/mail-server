@@ -23,10 +23,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -61,13 +58,22 @@ public class SmtpService {
 
         final List<User> recipients = findRecipients(receiveEmail.getRecipients());
 
-        recipients.forEach(recipient -> mailboxService.put(null, recipient));
+        recipients.forEach(recipient -> mailboxService.put(receiveEmail.toLetter(), recipient));
         log.info("From: {}, Letter: {}", receiveEmail.getFrom(), receiveEmail.getText());
     }
 
     private List<User> findRecipients(final List<Address> emails) {
-        //getLetters only name
-        return null;
+
+        final List<User> users = new ArrayList<>();
+        for (Address address : emails) {
+            final String addr = address.toString();
+            final User user = userService.get(addr.substring(0, addr.indexOf("@")));
+            if (Objects.nonNull(user)) {
+                users.add(user);
+            }
+        }
+
+        return users;
     }
 
     private MimeMessage parseMimeMessage(final Message message) {
@@ -124,7 +130,7 @@ public class SmtpService {
 
         if (StringUtils.isBlank(plainContent) && StringUtils.isNotBlank(htmlContent)) {
             return Jsoup.clean(htmlContent, Whitelist.basic());
-        } else if (StringUtils.isBlank(plainContent)) {
+        } else if (StringUtils.isNotBlank(plainContent)) {
             return plainContent;
         }
         return null;
