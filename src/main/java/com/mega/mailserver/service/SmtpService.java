@@ -4,6 +4,7 @@ import com.mega.mailserver.config.EmailProperties;
 import com.mega.mailserver.model.ReceiveEmailDto;
 import com.mega.mailserver.model.domain.Letter;
 import com.mega.mailserver.model.domain.User;
+import com.mega.mailserver.model.domain.UserK;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -59,18 +60,18 @@ public class SmtpService {
             return;
         }
 
-        final List<User> recipients = findRecipients(receiveEmail.getRecipients());
+        final List<UserK> recipients = findRecipients(receiveEmail.getRecipients());
 
         recipients.forEach(recipient -> mailboxService.put(receiveEmail.toLetter(), recipient.getName()));
         log.info("From: {}, Letter: {}", receiveEmail.getFrom(), receiveEmail.getText());
     }
 
-    private List<User> findRecipients(final List<InternetAddress> emails) {
+    private List<UserK> findRecipients(final List<InternetAddress> emails) {
 
-        final List<User> users = new ArrayList<>();
+        final List<UserK> users = new ArrayList<>();
         for (InternetAddress address : emails) {
             final String addr = address.getAddress();
-            final User user = userService.get(addr.substring(0, addr.indexOf("@")));
+            final UserK user = userService.get(addr.substring(0, addr.indexOf("@")));
             if (Objects.nonNull(user)) {
                 users.add(user);
             }

@@ -16,50 +16,50 @@ import java.util.Objects;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/duser")
 public class UserController {
 
-    private final UserService userService;
-
-    @PostMapping
-    public UserDto insert(@RequestBody UserDto user) {
-        if(StringUtils.isBlank(user.getName())) {
-            throw new BadRequestException("Name is empty");
-        }
-        final User existedUser = userService.get(user.getName());
-
-        if (Objects.nonNull(existedUser)) {
-            throw new ForbiddenException(String.format("user with such email :'%s' already exists", user.getName()));
-        }
-        final User resultUser = userService.upsert(user.toUser());
-        return UserDto.valueOf(resultUser);
-    }
-
-    @Secured(SecurityRole.USER)
-    @PutMapping
-    public UserDto update(@RequestBody UserDto user) {
-        final User existedUser = userService.get(user.getName());
-
-        if (Objects.isNull(existedUser)) {
-            throw new NotFoundException("No user found for name: " + user.getName());
-        }
-        final User resultUser = userService.upsert(user.toUser());
-        return UserDto.valueOf(resultUser);
-    }
-
-    @Secured(SecurityRole.USER)
-    @GetMapping("/{name}")
-    public UserDto get(@PathVariable("name") String name) {
-        if (StringUtils.isBlank(name)) {
-            throw new BadRequestException("Empty request");
-        }
-
-        final User user = userService.get(name);
-
-        if (Objects.isNull(user)) {
-            throw new NotFoundException("cannot find user with name " + name);
-        }
-
-        return UserDto.valueOf(user);
-    }
+//    private final UserService userService;
+//
+//    @PostMapping
+//    public UserDto insert(@RequestBody UserDto user) {
+//        if(StringUtils.isBlank(user.getName())) {
+//            throw new BadRequestException("Name is empty");
+//        }
+//        final User existedUser = userService.get(user.getName());
+//
+//        if (Objects.nonNull(existedUser)) {
+//            throw new ForbiddenException(String.format("user with such email :'%s' already exists", user.getName()));
+//        }
+//        final User resultUser = userService.upsert(user.toUser());
+//        return UserDto.valueOf(resultUser);
+//    }
+//
+//    @Secured(SecurityRole.USER)
+//    @PutMapping
+//    public UserDto update(@RequestBody UserDto user) {
+//        final User existedUser = userService.get(user.getName());
+//
+//        if (Objects.isNull(existedUser)) {
+//            throw new NotFoundException("No user found for name: " + user.getName());
+//        }
+//        final User resultUser = userService.upsert(user.toUser());
+//        return UserDto.valueOf(resultUser);
+//    }
+//
+//    @Secured(SecurityRole.USER)
+//    @GetMapping("/{name}")
+//    public UserDto get(@PathVariable("name") String name) {
+//        if (StringUtils.isBlank(name)) {
+//            throw new BadRequestException("Empty request");
+//        }
+//
+//        final User user = userService.get(name);
+//
+//        if (Objects.isNull(user)) {
+//            throw new NotFoundException("cannot find user with name " + name);
+//        }
+//
+//        return UserDto.valueOf(user);
+//    }
 }

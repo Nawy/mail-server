@@ -20,7 +20,7 @@ import java.util.List;
 @TypeAlias("letter")
 public class Letter {
 
-    @Indexed
+    @Id
     private String id;
     private String address;
     private List<String> cc;

@@ -1,6 +1,7 @@
 package com.mega.mailserver.service.security;
 
 import com.mega.mailserver.model.domain.User;
+import com.mega.mailserver.model.domain.UserK;
 import com.mega.mailserver.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -28,7 +29,7 @@ public class AuthProvider implements AuthenticationProvider {
         final String name = authentication.getName();
         final String password = authentication.getCredentials().toString();
 
-        final User user = userService.get(name);
+        final UserK user = userService.get(name);
         if (Objects.nonNull(user) && isAuth(password, user.getPassword())) {
             List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
             grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));

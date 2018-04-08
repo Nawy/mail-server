@@ -1,14 +1,18 @@
 buildscript {
+	ext.kotlin_version = '1.2.31'
 	ext {
 		springBootVersion = '2.0.0.RELEASE'
+		kotlin_version = '1.2.31'
 	}
 	repositories {
 		mavenCentral()
 		maven {url('http://repo.spring.io/plugins-release')}
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-		classpath('org.springframework.build.gradle:propdeps-plugin:0.0.7')
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+		classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 	}
 }
 
@@ -17,6 +21,7 @@ plugins {
 }
 
 apply plugin: 'java'
+apply plugin: "kotlin"
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: "io.spring.dependency-management"
@@ -64,6 +69,18 @@ dependencies {
 	compile('com.sun.mail:javax.mail:1.6.1')
 
 	compileOnly('org.projectlombok:lombok')
+	compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+	compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
 
 compileJava.dependsOn(processResources)
+compileKotlin {
+	kotlinOptions {
+		jvmTarget = "1.8"
+	}
+}
+compileTestKotlin {
+	kotlinOptions {
+		jvmTarget = "1.8"
+	}
+}
