@@ -28,9 +28,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     AuthEntryPoint authEntryPoint;
 
-    @Autowired
-    AuthSuccessHandler authSuccessHandler;
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authProvider);
@@ -45,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .loginProcessingUrl("/login")
                     .usernameParameter("name")
                     .passwordParameter("password")
-                    .successHandler(authSuccessHandler)
+                    .successHandler(new AuthSuccessHandler())
                     .failureHandler(new SimpleUrlAuthenticationFailureHandler())
                     .and()
                 .logout()

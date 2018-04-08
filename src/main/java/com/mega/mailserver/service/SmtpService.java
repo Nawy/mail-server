@@ -1,14 +1,16 @@
 package com.mega.mailserver.service;
 
-import com.mega.mailserver.config.EmailConfig;
+import com.mega.mailserver.config.EmailProperties;
 import com.mega.mailserver.model.ReceiveEmailDto;
-import com.mega.mailserver.model.SendEmailDto;
 import com.mega.mailserver.model.domain.Letter;
 import com.mega.mailserver.model.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.SimpleEmail;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
@@ -31,12 +33,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SmtpService {
 
-    private final EmailConfig emailConfig;
+    private final EmailProperties emailProperties;
     private final MailboxService mailboxService;
     private final UserService userService;
 
     public void send(final Letter letter, final User user) throws Exception {
-        Email email = emailConfig.getEmail(user.getName(), user.getFullName());
+        Email email = preConfigureEmail(user.getName(), user.getFullName());
 
         final String recipientString = String.join(",", letter.getAddress());
         final List<InternetAddress> recipients = Arrays.asList(InternetAddress.parse(recipientString));
@@ -135,5 +137,31 @@ public class SmtpService {
             return plainContent;
         }
         return null;
+    }
+
+    private Email preConfigureEmail(final String sender, final String fullName) {
+
+        final Email email = new SimpleEmail();
+        email.setHostName(emailProperties.getHost());
+        email.setSmtpPort(emailProperties.getPort());
+        email.setAuthenticator(
+                new DefaultAuthenticator(
+                        emailProperties.getUsername(),
+                        emailProperties.getPassword()
+                )
+        );
+
+        final String emailAddress = String.format("%s@%s", sender, emailProperties.getDomain());
+
+        try {
+            if(StringUtils.isBlank(fullName)) {
+                email.setFrom(emailAddress);
+            } else {
+                email.setFrom(emailAddress, fullName);
+            }
+        } catch (EmailException e) {
+            throw new RuntimeException(e);
+        }
+        return email;
     }
 }
