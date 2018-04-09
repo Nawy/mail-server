@@ -7,10 +7,10 @@ import org.springframework.data.mongodb.core.mapping.Document
 @TypeAlias("user")
 @Document(collection = "user")
 data class UserDtoK(
-        val name: String = "",
-        val phoneNumber: String,
-        val fullName: String,
-        val password: String
+        var name: String = "",
+        var phoneNumber: String,
+        var fullName: String,
+        var password: String
 ) {
     fun toUser(): UserK {
         return UserK(

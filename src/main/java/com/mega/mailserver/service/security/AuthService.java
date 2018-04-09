@@ -1,6 +1,6 @@
 package com.mega.mailserver.service.security;
 
-import com.mega.mailserver.model.domain.User;
+import com.mega.mailserver.model.domain.UserK;
 import com.mega.mailserver.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -17,7 +17,7 @@ public class AuthService {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
-    public User getUser() {
-        return (User)getAuthentication().getPrincipal();
+    public UserK getUser() {
+        return (UserK)getAuthentication().getPrincipal();
     }
 }

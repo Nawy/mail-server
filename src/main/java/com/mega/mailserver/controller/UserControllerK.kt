@@ -6,13 +6,15 @@ import com.mega.mailserver.model.exception.BadRequestException
 import com.mega.mailserver.model.exception.ForbiddenException
 import com.mega.mailserver.model.exception.NotFoundException
 import com.mega.mailserver.service.UserService
+import com.mega.mailserver.service.security.AuthService
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/user")
 open class UserControllerK(
-        private val userService: UserService
+        private val userService: UserService,
+        private val authService: AuthService
 ) {
 
     @PostMapping
@@ -28,13 +30,14 @@ open class UserControllerK(
         userService.upsert(user.toUser())
     }
 
-    @GetMapping("/test")
-    fun test() : UserDtoK {
-        return UserDtoK(
-                "MyName",
-                "Phone",
-                "Full Name",
-                 "Password"
+    @Secured(SecurityRole.USER)
+    @PutMapping
+    fun put(userDto : UserDtoK) : UserDtoK {
+
+        userDto.name = authService.user.name
+
+        return UserDtoK.valueOf(
+                userService.upsert(userDto.toUser())
         )
     }
 

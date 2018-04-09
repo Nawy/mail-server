@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 @Document(collection = "user")
 data class UserK(
         @Id
-        val id : String = "",
+        val id : String? = null,
         @Indexed
         val name : String = "",
         var password : String = "",

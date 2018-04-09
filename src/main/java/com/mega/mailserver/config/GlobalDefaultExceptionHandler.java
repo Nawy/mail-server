@@ -1,9 +1,11 @@
 package com.mega.mailserver.config;
 
 import com.mega.mailserver.model.exception.HttpException;
+import com.mega.mailserver.model.exception.NotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -14,8 +16,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 /**
  * Created by ermolaev on 2/13/17.
  */
+@Slf4j
 @ControllerAdvice
-@Log
 public class GlobalDefaultExceptionHandler {
 
     @ExceptionHandler(HttpException.class)
@@ -28,13 +30,14 @@ public class GlobalDefaultExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException exception) {
-        return new ResponseEntity<>(new ErrorResponse("Unauthorized!"), HttpStatus.UNAUTHORIZED);
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(NotFoundException exception) {
+        return new ResponseEntity<>(new ErrorResponse(exception.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
+        log.error("Error: " , exception);
         return new ResponseEntity<>(new ErrorResponse(exception.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
