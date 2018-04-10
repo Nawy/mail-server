@@ -2,6 +2,7 @@ package com.mega.mailserver.service;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.mega.mailserver.config.EmailProperties;
 import com.mega.mailserver.model.domain.Letter;
 import com.mega.mailserver.model.domain.Mailbox;
 import com.mega.mailserver.model.domain.User;
@@ -10,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
@@ -18,7 +20,6 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 @AllArgsConstructor
 public class MailboxService {
 
-    private final UserService userService;
     private final MailboxRepository mailboxRepository;
 
     public Collection<Letter> getConversation(final String userName, final String address) {
@@ -46,6 +47,7 @@ public class MailboxService {
 
     public void put(final Letter letter, final String userName) {
         Objects.requireNonNull(letter);
+        letter.setTime(LocalDateTime.now());
 
         final Mailbox mailbox = mailboxRepository.findById(userName)
                 .orElseGet(() -> Mailbox.builder().userName(userName).build());
