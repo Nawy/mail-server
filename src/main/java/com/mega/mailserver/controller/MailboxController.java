@@ -3,12 +3,15 @@ package com.mega.mailserver.controller;
 import com.mega.mailserver.model.SecurityRole;
 import com.mega.mailserver.model.domain.Letter;
 import com.mega.mailserver.model.domain.User;
+import com.mega.mailserver.model.exception.BadRequestException;
 import com.mega.mailserver.service.MailboxService;
+import com.mega.mailserver.service.PostService;
 import com.mega.mailserver.service.security.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.internet.AddressException;
 import java.util.Collection;
 
 @Secured(SecurityRole.USER)
@@ -17,8 +20,19 @@ import java.util.Collection;
 @RequestMapping("/mailbox")
 public class MailboxController {
 
+    private final PostService postService;
     private final MailboxService mailboxService;
     private final AuthService authService;
+
+    @PostMapping
+    public void addLetter(@RequestBody Letter letter) {
+        final User user = authService.getUser();
+        try {
+            postService.send(letter, user);
+        } catch (AddressException | IllegalArgumentException e) {
+            throw new BadRequestException("Wrong arguments");
+        }
+    }
 
     @GetMapping("/{address}")
     public Collection<Letter> getConversation(@PathVariable("address") String address) {

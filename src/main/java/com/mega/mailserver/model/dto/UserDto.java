@@ -26,6 +26,12 @@ public class UserDto {
                 .build();
     }
 
+    public static UserDto nameValueOf(final User user) {
+        return UserDto.builder()
+                .name(user.getName())
+                .build();
+    }
+
     public User toUser() {
         return User.builder()
                 .name(name)

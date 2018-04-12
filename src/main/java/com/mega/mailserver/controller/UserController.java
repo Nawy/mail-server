@@ -48,6 +48,21 @@ public class UserController {
     }
 
     @Secured(SecurityRole.USER)
+    @GetMapping("/{name}/info")
+    public UserDto getInfo(@PathVariable("name") String name) {
+        if (StringUtils.isBlank(name)) {
+            throw new BadRequestException("Empty request");
+        }
+
+        final User user = userService.get(name);
+
+        if (Objects.isNull(user)) {
+            throw new NotFoundException("cannot find user with name " + name);
+        }
+
+        return UserDto.valueOf(user);
+    }
+
     @GetMapping("/{name}")
     public UserDto get(@PathVariable("name") String name) {
         if (StringUtils.isBlank(name)) {
@@ -60,6 +75,6 @@ public class UserController {
             throw new NotFoundException("cannot find user with name " + name);
         }
 
-        return UserDto.valueOf(user);
+        return UserDto.nameValueOf(user);
     }
 }

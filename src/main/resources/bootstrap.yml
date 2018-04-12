@@ -46,3 +46,26 @@ email:
   port: 567
   username: sendserver
   password: 13SaintMonkeys
+
+---
+
+spring:
+  profiles: container
+
+  data:
+    mongodb:
+      database: mail
+      host: mongodb
+      port: 27017
+
+  rabbitmq:
+    host: rabbitmq
+    username: admin
+    password: admin
+
+email:
+  domain: ermolaev.am
+  host: postfix
+  port: 567
+  username: sendserver
+  password: 13SaintMonkeys
