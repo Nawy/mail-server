@@ -48,7 +48,7 @@ public class UserController {
     }
 
     @Secured(SecurityRole.USER)
-    @GetMapping("/{name}/info")
+    @GetMapping("/{name}")
     public UserDto getInfo(@PathVariable("name") String name) {
         if (StringUtils.isBlank(name)) {
             throw new BadRequestException("Empty request");
@@ -63,7 +63,7 @@ public class UserController {
         return UserDto.valueOf(user);
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/{name}/name")
     public UserDto get(@PathVariable("name") String name) {
         if (StringUtils.isBlank(name)) {
             throw new BadRequestException("Empty request");
