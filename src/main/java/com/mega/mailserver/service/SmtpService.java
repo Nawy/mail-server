@@ -16,6 +16,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.Address;
@@ -37,6 +38,7 @@ public class SmtpService {
     private final MailboxService mailboxService;
     private final UserService userService;
 
+    @Async
     public void send(final Letter letter, final User user) throws Exception {
         Email email = preConfigureEmail(user.getName(), user.getFullName());
 
