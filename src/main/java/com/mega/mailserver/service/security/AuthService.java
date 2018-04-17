@@ -8,15 +8,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
 public class AuthService {
-
-    private final UserService userService;
 
     public Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
-
     public User getUser() {
         return (User)getAuthentication().getPrincipal();
     }

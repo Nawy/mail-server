@@ -17,9 +17,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @TypeAlias("user")
 @Document(collection = "user")
 public class User {
+
     @Id
-    private String id;
-    @Indexed
     private String name;
     private String password;
     private String phoneNumber;
