@@ -44,6 +44,20 @@ public class MailboxController {
     }
 
     @Secured(SecurityRole.USER)
+    @GetMapping("/conversation/names")
+    public Set<String> getConversationNames() {
+        final User user = authService.getUser();
+        return mailboxService.getConversationNames(user.getName(), false);
+    }
+
+    @Secured(SecurityRole.USER)
+    @GetMapping("/spam/conversation/names")
+    public Set<String> getSpamConversationNames() {
+        final User user = authService.getUser();
+        return mailboxService.getConversationNames(user.getName(), true);
+    }
+
+    @Secured(SecurityRole.USER)
     @GetMapping("/letters")
     public Collection<Letter> getLetters() {
         final User user = authService.getUser();

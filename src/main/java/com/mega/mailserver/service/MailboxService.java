@@ -30,6 +30,12 @@ public class MailboxService {
         return conversation.isEmpty() ? mailbox.getSpam().get(address) : conversation;
     }
 
+    public Set<String> getConversationNames(final String userName,final boolean spam){
+        final Mailbox mailbox = getMailbox(userName);
+        if (Objects.isNull(mailbox)) return Collections.emptySet();
+        return spam? mailbox.getSpam().keySet(): mailbox.getLetters().keySet();
+    }
+
     private Mailbox getMailbox(final String userName) {
         return mailboxRepository.findById(userName).orElse(null);
     }
