@@ -38,26 +38,28 @@ public class MailboxController {
 
     @Secured(SecurityRole.USER)
     @GetMapping("/{address}")
-    public Collection<Letter> getConversation(@PathVariable("address") String address) {
+    public Collection<Letter> getChat(@PathVariable("address") String address) {
         final User user = authService.getUser();
-        return mailboxService.getConversation(user.getName(), address);
+        return mailboxService.getChat(user.getName(), address);
     }
 
     @Secured(SecurityRole.USER)
-    @GetMapping("/conversation/names")
-    public Set<String> getConversationNames() {
+    @GetMapping("/chat/names")
+    public Set<String> getChatNames() {
         final User user = authService.getUser();
-        return mailboxService.getConversationNames(user.getName(), false);
+        return mailboxService.getChatNames(user.getName(), false);
     }
 
     @Secured(SecurityRole.USER)
-    @GetMapping("/spam/conversation/names")
-    public Set<String> getSpamConversationNames() {
+    @GetMapping("/spam/chat/names")
+    public Set<String> getSpamChatNames() {
         final User user = authService.getUser();
-        return mailboxService.getConversationNames(user.getName(), true);
+        return mailboxService.getChatNames(user.getName(), true);
     }
 
-    @Secured(SecurityRole.USER)
+
+    //FIXME this methods don't needed?
+    /*@Secured(SecurityRole.USER)
     @GetMapping("/letters")
     public Collection<Letter> getLetters() {
         final User user = authService.getUser();
@@ -69,5 +71,5 @@ public class MailboxController {
     public Collection<Letter> getSpam() {
         final User user = authService.getUser();
         return mailboxService.getSpam(user.getName());
-    }
+    }*/
 }

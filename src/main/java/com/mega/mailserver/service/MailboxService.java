@@ -23,14 +23,14 @@ public class MailboxService {
 
     private final MailboxRepository mailboxRepository;
 
-    public Collection<Letter> getConversation(final String userName, final String address) {
+    public Collection<Letter> getChat(final String userName, final String address) {
         final Mailbox mailbox = getMailbox(userName);
         if (Objects.isNull(mailbox)) return Collections.emptyList();
         final Collection<Letter> conversation = mailbox.getLetters().get(address);
         return conversation.isEmpty() ? mailbox.getSpam().get(address) : conversation;
     }
 
-    public Set<String> getConversationNames(final String userName,final boolean spam){
+    public Set<String> getChatNames(final String userName, final boolean spam){
         final Mailbox mailbox = getMailbox(userName);
         if (Objects.isNull(mailbox)) return Collections.emptySet();
         return spam? mailbox.getSpam().keySet(): mailbox.getLetters().keySet();
