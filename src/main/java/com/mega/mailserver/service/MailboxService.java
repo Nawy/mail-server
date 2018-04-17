@@ -2,17 +2,18 @@ package com.mega.mailserver.service;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.mega.mailserver.config.EmailProperties;
 import com.mega.mailserver.model.domain.Letter;
 import com.mega.mailserver.model.domain.Mailbox;
-import com.mega.mailserver.model.domain.User;
+import com.mega.mailserver.model.exception.NotFoundException;
 import com.mega.mailserver.repository.MailboxRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Set;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 
@@ -23,25 +24,23 @@ public class MailboxService {
     private final MailboxRepository mailboxRepository;
 
     public Collection<Letter> getConversation(final String userName, final String address) {
+        final Mailbox mailbox = getMailbox(userName);
+        if (Objects.isNull(mailbox)) return Collections.emptyList();
+        final Collection<Letter> conversation = mailbox.getLetters().get(address);
+        return conversation.isEmpty() ? mailbox.getSpam().get(address) : conversation;
+    }
 
-        final Mailbox mailbox = mailboxRepository.findById(userName).orElseGet(null);
-
-        Collection<Letter> conversation = mailbox.getLetters().get(address);
-
-        if(CollectionUtils.isEmpty(conversation)) {
-            conversation = mailbox.getSpam().get(address);
-        }
-
-        return Objects.isNull(conversation) ? Collections.emptyList() : conversation;
+    private Mailbox getMailbox(final String userName) {
+        return mailboxRepository.findById(userName).orElse(null);
     }
 
     public Collection<Letter> getLetters(final String userName) {
-        final Mailbox mailbox = mailboxRepository.findById(userName).orElseGet(null);
+        final Mailbox mailbox = getMailbox(userName);
         return Objects.isNull(mailbox) ? Collections.emptyList() : mailbox.getLetters().values();
     }
 
     public Collection<Letter> getSpam(final String userName) {
-        final Mailbox mailbox = mailboxRepository.findById(userName).orElseGet(null);
+        final Mailbox mailbox = getMailbox(userName);
         return Objects.isNull(mailbox) ? Collections.emptyList() : mailbox.getSpam().values();
     }
 

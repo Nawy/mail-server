@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.internet.AddressException;
 import java.util.Collection;
+import java.util.Set;
 
 @Secured(SecurityRole.USER)
 @RestController
@@ -24,6 +25,7 @@ public class MailboxController {
     private final MailboxService mailboxService;
     private final AuthService authService;
 
+    @Secured(SecurityRole.USER)
     @PostMapping
     public void addLetter(@RequestBody Letter letter) {
         final User user = authService.getUser();
@@ -34,18 +36,21 @@ public class MailboxController {
         }
     }
 
+    @Secured(SecurityRole.USER)
     @GetMapping("/{address}")
     public Collection<Letter> getConversation(@PathVariable("address") String address) {
         final User user = authService.getUser();
         return mailboxService.getConversation(user.getName(), address);
     }
 
+    @Secured(SecurityRole.USER)
     @GetMapping("/letters")
     public Collection<Letter> getLetters() {
         final User user = authService.getUser();
         return mailboxService.getLetters(user.getName());
     }
 
+    @Secured(SecurityRole.USER)
     @GetMapping("/spam")
     public Collection<Letter> getSpam() {
         final User user = authService.getUser();
