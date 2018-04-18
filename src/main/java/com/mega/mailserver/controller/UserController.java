@@ -7,6 +7,7 @@ import com.mega.mailserver.model.exception.BadRequestException;
 import com.mega.mailserver.model.exception.ForbiddenException;
 import com.mega.mailserver.model.exception.NotFoundException;
 import com.mega.mailserver.service.UserService;
+import com.mega.mailserver.service.security.AuthService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.annotation.Secured;
@@ -20,6 +21,7 @@ import java.util.Objects;
 public class UserController {
 
     private final UserService userService;
+    private final AuthService authService;
 
     @PostMapping
     public UserDto insert(@RequestBody UserDto user) {
@@ -61,6 +63,13 @@ public class UserController {
         }
 
         return UserDto.valueOf(user);
+    }
+
+    @Secured(SecurityRole.USER)
+    @GetMapping
+    public String getSessionUserName(){
+        final User user = authService.getUser();
+        return user.getName();
     }
 
     @GetMapping("/{name}/name")
