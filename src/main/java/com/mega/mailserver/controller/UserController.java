@@ -67,9 +67,9 @@ public class UserController {
 
     @Secured(SecurityRole.USER)
     @GetMapping
-    public String getSessionUserName(){
+    public UserDto getSessionUserName() {
         final User user = authService.getUser();
-        return user.getName();
+        return  UserDto.nameValueOf(user);
     }
 
     @GetMapping("/{name}/name")

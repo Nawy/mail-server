@@ -6,6 +6,30 @@ spring:
   data:
     mongodb:
       database: mail
+      host: localhost
+      port: 27017
+
+  rabbitmq:
+    host: localhost
+    username: guest
+    password: guest
+
+email:
+  domain: ermolaev.am
+  host: 192.168.200.1
+  port: 567
+  username: sendserver
+  password: 13SaintMonkeys
+
+server:
+  port: 8090
+
+---
+spring:
+  profiles: ivan-home
+  data:
+    mongodb:
+      database: mail
       host: 192.168.1.64
       port: 27017
 
@@ -20,9 +44,6 @@ email:
   port: 567
   username: sendserver
   password: 13SaintMonkeys
-
-server:
-  port: 8081
 
 ---
 
