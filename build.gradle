@@ -28,6 +28,7 @@ apply plugin: 'propdeps-idea'
 
 jar {
 	baseName = "mailserver"
+	exclude ("logback-test.xml")
 }
 
 group = 'com.mega'
