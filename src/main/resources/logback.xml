@@ -1,0 +1,24 @@
+<configuration scan="true">
+    <!-- use Spring default values -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <appender name="internal" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+
+        <file>log/mail-server.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>/data/log/sync-service.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <totalSizeCap>500MB</totalSizeCap>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="internal"/>
+    </root>
+</configuration>
