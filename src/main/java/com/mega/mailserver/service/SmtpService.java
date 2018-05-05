@@ -103,9 +103,10 @@ public class SmtpService {
             throw new RuntimeException(e);
         }
 
-        final String content = cleanContent(parser.getHtmlContent(), parser.getPlainContent());
+        final String text = cleanContent(parser.getHtmlContent(), parser.getPlainContent());
+        final String htmlText = parser.getHtmlContent();
 
-        if (Objects.isNull(content)) {
+        if (Objects.isNull(text)) {
             return null;
         }
 
@@ -127,14 +128,15 @@ public class SmtpService {
         return ReceiveEmailDto.builder()
                 .recipients(to.stream().map(addr -> (InternetAddress)addr).collect(Collectors.toList()))
                 .from(from)
-                .text(content)
+                .text(text)
+                .htmlText(htmlText)
                 .build();
     }
 
     private String cleanContent(final String htmlContent, final String plainContent) {
 
         if (StringUtils.isBlank(plainContent) && StringUtils.isNotBlank(htmlContent)) {
-            return Jsoup.clean(htmlContent, Whitelist.basic());
+            return Jsoup.clean(htmlContent, Whitelist.simpleText());
         } else if (StringUtils.isNotBlank(plainContent)) {
             return plainContent;
         }

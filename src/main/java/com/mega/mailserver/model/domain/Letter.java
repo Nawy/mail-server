@@ -27,5 +27,6 @@ public class Letter {
     private List<String> bcc;
     private LetterDirection direction;
     private String text;
+    private String htmlText;
     private LocalDateTime time;
 }

@@ -56,20 +56,4 @@ public class MailboxController {
         final User user = authService.getUser();
         return mailboxService.getChatNames(user.getName(), true);
     }
-
-
-    //FIXME this methods don't needed?
-    /*@Secured(SecurityRole.USER)
-    @GetMapping("/letters")
-    public Collection<Letter> getLetters() {
-        final User user = authService.getUser();
-        return mailboxService.getLetters(user.getName());
-    }
-
-    @Secured(SecurityRole.USER)
-    @GetMapping("/spam")
-    public Collection<Letter> getSpam() {
-        final User user = authService.getUser();
-        return mailboxService.getSpam(user.getName());
-    }*/
 }

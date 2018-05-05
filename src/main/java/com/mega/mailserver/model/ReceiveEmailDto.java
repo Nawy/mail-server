@@ -19,11 +19,13 @@ public class ReceiveEmailDto {
     private List<InternetAddress> bcc;
     private String from;
     private String text;
+    private String htmlText;
 
     public Letter toLetter() {
         return Letter.builder()
                 .address(from)
                 .text(text)
+                .htmlText(htmlText)
                 .direction(LetterDirection.INBOX)
                 .build();
     }
