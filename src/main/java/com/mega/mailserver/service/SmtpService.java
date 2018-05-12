@@ -56,11 +56,7 @@ public class SmtpService {
 
         MimeMessage mimeMessage = parseMimeMessage(message);
         ReceiveEmailDto receiveEmail = parseContent(mimeMessage);
-
-        if (Objects.isNull(receiveEmail)) {
-            return;
-        }
-
+        if (Objects.isNull(receiveEmail)) return;
         final List<User> recipients = findRecipients(receiveEmail.getRecipients());
 
         recipients.forEach(recipient -> mailboxService.put(receiveEmail.toLetter(), recipient.getName()));

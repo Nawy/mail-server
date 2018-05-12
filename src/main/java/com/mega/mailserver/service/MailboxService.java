@@ -57,7 +57,7 @@ public class MailboxService {
         final Mailbox mailbox = mailboxRepository.findById(userName)
                 .orElseGet(() -> Mailbox.builder().userName(userName).build());
 
-        final String address = letter.getAddress();
+        final String address = letter.getAddress().toLowerCase();
 
         final Multimap<String, Letter> letters = firstNonNull(mailbox.getLetters(), HashMultimap.create());
 

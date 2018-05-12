@@ -5,10 +5,8 @@ import com.mega.mailserver.model.enums.LetterDirection;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @Builder
