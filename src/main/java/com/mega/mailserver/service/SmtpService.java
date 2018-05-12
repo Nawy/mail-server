@@ -41,32 +41,36 @@ public class SmtpService {
 
     @Async
     public void send(final Letter letter, final User user) {
-        final String recipientString = String.join(",", letter.getAddress());
-        InternetAddress[] internetAddresses;
         try {
-            internetAddresses = InternetAddress.parse(recipientString);
-        } catch (AddressException e) {
-            log.error("Can't parse recipient address: {}", recipientString);
-            throw new RuntimeException(e);
-        }
-        final List<InternetAddress> recipients = Arrays.asList(internetAddresses);
+            final String recipientString = String.join(",", letter.getAddress());
+            InternetAddress[] internetAddresses;
+            try {
+                internetAddresses = InternetAddress.parse(recipientString);
+            } catch (AddressException e) {
+                log.error("Can't parse recipient address: {}", recipientString);
+                throw new RuntimeException(e);
+            }
+            final List<InternetAddress> recipients = Arrays.asList(internetAddresses);
 
-        Email email = preConfigureEmail(user.getName(), user.getFullName());
-        try {
-            email.setTo(recipients);
-            email.setMsg(letter.getText());
-        } catch (EmailException e) {
-            log.error("Can't create email to: {} with body from letter:{}", recipientString, letter.toString());
-            throw new RuntimeException(e);
-        }
+            Email email = preConfigureEmail(user.getName(), user.getFullName());
+            try {
+                email.setTo(recipients);
+                email.setMsg(letter.getText());
+            } catch (EmailException e) {
+                log.error("Can't create email to: {} with body from letter:{}", recipientString, letter.toString());
+                throw new RuntimeException(e);
+            }
 
-        try {
-            email.send();
-        } catch (EmailException e) {
-            log.error("Can't send email to: {}", recipientString);
-            throw new RuntimeException(e);
+            try {
+                email.send();
+            } catch (EmailException e) {
+                log.error("Can't send email to: {}", recipientString);
+                throw new RuntimeException(e);
+            }
+            log.info("[{}] sent mail to {}", user.getName(), recipients);
+        } catch (Exception e) {
+            mailboxService.setNotDelivered(letter, user.getName());
         }
-        log.info("[{}] sent mail to {}", user.getName(), recipients);
     }
 
     @RabbitListener(queues = "haraka.emails")

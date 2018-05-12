@@ -4,16 +4,12 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mega.mailserver.model.domain.Letter;
 import com.mega.mailserver.model.domain.Mailbox;
-import com.mega.mailserver.model.exception.NotFoundException;
 import com.mega.mailserver.repository.MailboxRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 
@@ -58,7 +54,6 @@ public class MailboxService {
                 .orElseGet(() -> Mailbox.builder().userName(userName).build());
 
         final String address = letter.getAddress().toLowerCase();
-
         final Multimap<String, Letter> letters = firstNonNull(mailbox.getLetters(), HashMultimap.create());
 
         if (letters.containsKey(address)) {
@@ -71,5 +66,35 @@ public class MailboxService {
         }
 
         mailboxRepository.save(mailbox);
+    }
+
+    public void setNotDelivered(final Letter letter, final String username) {
+        Objects.requireNonNull(letter);
+
+        final Mailbox mailbox = mailboxRepository.findById(username)
+                .orElseGet(() -> Mailbox.builder().userName(username).build());
+        final String address = letter.getAddress().toLowerCase();
+        final Multimap<String, Letter> letters = mailbox.getLetters();
+        if (letters.containsKey(address)) {
+            Letter dbLetter = findLetter(letters, address, letter.getId()).orElse(null);
+            if (dbLetter != null) {
+                dbLetter.setNotDelivered(true);
+                mailbox.setLetters(letters);
+            }
+        } else {
+            final Multimap<String, Letter> spam = mailbox.getSpam();
+            if (spam.isEmpty()) return;
+            Letter dbLetter = findLetter(spam, address, letter.getId()).orElse(null);
+            if (dbLetter == null) return;
+            dbLetter.setNotDelivered(true);
+            mailbox.setSpam(spam);
+        }
+        mailboxRepository.save(mailbox);
+    }
+
+    private Optional<Letter> findLetter(Multimap<String, Letter> letters, String address, String id) {
+        return letters.get(address).stream()
+                .filter(l -> l.getId().equals(id))
+                .findFirst();
     }
 }

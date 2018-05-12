@@ -6,9 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
-import org.springframework.data.mongodb.core.index.Indexed;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,8 +18,7 @@ import java.util.List;
 @TypeAlias("letter")
 public class Letter {
 
-    @Indexed
-    private String id;
+    private String id = new ObjectId().toString();
     private String address;
     private List<String> cc;
     private List<String> bcc;
@@ -29,4 +26,5 @@ public class Letter {
     private String text;
     private String htmlText;
     private LocalDateTime time;
+    private Boolean notDelivered;
 }

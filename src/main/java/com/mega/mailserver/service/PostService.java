@@ -24,13 +24,13 @@ public class PostService {
         final EmailAddress toAddress = new EmailAddress(letter.getAddress());
         final String recipientDomain = toAddress.getDomain();
 
-        if (!isLocalDomain(recipientDomain)) smtpService.send(letter, user);
-
         final Letter outboxEmail = letter.toBuilder()
                 .direction(LetterDirection.OUTBOX)
                 .build();
 
         mailboxService.put(outboxEmail, user.getName());
+
+        if (!isLocalDomain(recipientDomain)) smtpService.send(letter, user);
     }
 
     private boolean isLocalDomain(final String domain) {
