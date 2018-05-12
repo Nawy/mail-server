@@ -24,13 +24,7 @@ public class PostService {
         final EmailAddress toAddress = new EmailAddress(letter.getAddress());
         final String recipientDomain = toAddress.getDomain();
 
-        if (!isLocalDomain(recipientDomain)) {
-            try {
-                smtpService.send(letter, user);
-            } catch (Exception e) {
-                throw new InternalServerErrorException("Cannot send message");
-            }
-        }
+        if (!isLocalDomain(recipientDomain)) smtpService.send(letter, user);
 
         final Letter outboxEmail = letter.toBuilder()
                 .direction(LetterDirection.OUTBOX)
