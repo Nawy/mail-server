@@ -43,6 +43,7 @@ public class SmtpService {
     public void send(final Letter letter, final User user) {
         try {
             final String recipientString = String.join(",", letter.getAddress());
+
             InternetAddress[] internetAddresses;
             try {
                 internetAddresses = InternetAddress.parse(recipientString);

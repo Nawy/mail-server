@@ -8,6 +8,7 @@ import com.mega.mailserver.service.MailboxService;
 import com.mega.mailserver.service.PostService;
 import com.mega.mailserver.service.security.AuthService;
 import lombok.AllArgsConstructor;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,8 @@ import java.util.Set;
 @RequestMapping("/mailbox")
 public class MailboxController {
 
+    private static final EmailValidator emailValidator = EmailValidator.getInstance();
+
     private final PostService postService;
     private final MailboxService mailboxService;
     private final AuthService authService;
@@ -28,6 +31,10 @@ public class MailboxController {
     @Secured(SecurityRole.USER)
     @PostMapping
     public void addLetter(@RequestBody Letter letter) {
+
+        final boolean isValidEmail = emailValidator.isValid(letter.getAddress());
+        if (!isValidEmail) throw new BadRequestException("bad email set");
+
         final User user = authService.getUser();
         try {
             postService.send(letter, user);

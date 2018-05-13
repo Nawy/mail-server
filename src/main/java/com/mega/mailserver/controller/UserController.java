@@ -25,11 +25,10 @@ public class UserController {
 
     @PostMapping
     public UserDto insert(@RequestBody UserDto user) {
-        if(StringUtils.isBlank(user.getName())) {
-            throw new BadRequestException("Name is empty");
-        }
-        final User existedUser = userService.get(user.getName());
+        if(StringUtils.isBlank(user.getName())) throw new BadRequestException("Name is empty");
+        user.setName(user.getName().toLowerCase());
 
+        final User existedUser = userService.get(user.getName());
         if (Objects.nonNull(existedUser)) {
             throw new ForbiddenException(String.format("user with such email :'%s' already exists", user.getName()));
         }
@@ -40,8 +39,10 @@ public class UserController {
     @Secured(SecurityRole.USER)
     @PutMapping
     public UserDto update(@RequestBody UserDto user) {
-        final User existedUser = userService.get(user.getName());
+        if(StringUtils.isBlank(user.getName())) throw new BadRequestException("Name is empty");
+        user.setName(user.getName().toLowerCase());
 
+        final User existedUser = userService.get(user.getName());
         if (Objects.isNull(existedUser)) {
             throw new NotFoundException("No user found for name: " + user.getName());
         }
@@ -52,16 +53,7 @@ public class UserController {
     @Secured(SecurityRole.USER)
     @GetMapping("/{name}")
     public UserDto getInfo(@PathVariable("name") String name) {
-        if (StringUtils.isBlank(name)) {
-            throw new BadRequestException("Empty request");
-        }
-
-        final User user = userService.get(name);
-
-        if (Objects.isNull(user)) {
-            throw new NotFoundException("cannot find user with name " + name);
-        }
-
+        final User user = getUser(name);
         return UserDto.valueOf(user);
     }
 
@@ -74,16 +66,19 @@ public class UserController {
 
     @GetMapping("/{name}/name")
     public UserDto get(@PathVariable("name") String name) {
-        if (StringUtils.isBlank(name)) {
-            throw new BadRequestException("Empty request");
-        }
+        final User user = getUser(name);
+        return UserDto.nameValueOf(user);
+    }
 
-        final User user = userService.get(name);
+    private User getUser(@PathVariable("name") String name) {
+        if (StringUtils.isBlank(name)) throw new BadRequestException("Empty request");
+        String lowerCaseName = name.toLowerCase();
+
+        final User user = userService.get(lowerCaseName);
 
         if (Objects.isNull(user)) {
-            throw new NotFoundException("cannot find user with name " + name);
+            throw new NotFoundException("cannot find user with name " + lowerCaseName);
         }
-
-        return UserDto.nameValueOf(user);
+        return user;
     }
 }
