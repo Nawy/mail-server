@@ -48,7 +48,7 @@ public class MailboxService {
 
     public void put(final Letter letter, final String userName) {
         Objects.requireNonNull(letter);
-        letter.setTime(LocalDateTime.now());
+        letter.setDeliveryTime(LocalDateTime.now());
 
         final Mailbox mailbox = mailboxRepository.findById(userName)
                 .orElseGet(() -> Mailbox.builder().userName(userName).build());

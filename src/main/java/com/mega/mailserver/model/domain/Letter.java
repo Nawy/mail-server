@@ -25,6 +25,7 @@ public class Letter {
     private LetterDirection direction;
     private String text;
     private String htmlText;
-    private LocalDateTime time;
+    private LocalDateTime seenTime;
+    private LocalDateTime deliveryTime;
     private Boolean notDelivered;
 }
