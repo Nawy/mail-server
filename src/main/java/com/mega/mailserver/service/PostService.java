@@ -31,6 +31,11 @@ public class PostService {
         mailboxService.put(outboxEmail, user.getName());
 
         if (!isLocalDomain(recipientDomain)) smtpService.send(letter, user);
+        else {
+            letter.setAddress(user.getName());
+            letter.setDirection(LetterDirection.INBOX);
+            mailboxService.put(letter, toAddress.getName());
+        }
     }
 
     private boolean isLocalDomain(final String domain) {
