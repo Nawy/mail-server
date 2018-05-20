@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.Session;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayInputStream;
@@ -39,16 +40,38 @@ public class SmtpService {
     private final UserService userService;
 
     @Async
-    public void send(final Letter letter, final User user) throws Exception {
-        Email email = preConfigureEmail(user.getName(), user.getFullName());
+    public void send(final Letter letter, final User user) {
+        try {
+            final String recipientString = String.join(",", letter.getAddress());
 
-        final String recipientString = String.join(",", letter.getAddress());
-        final List<InternetAddress> recipients = Arrays.asList(InternetAddress.parse(recipientString));
+            InternetAddress[] internetAddresses;
+            try {
+                internetAddresses = InternetAddress.parse(recipientString);
+            } catch (AddressException e) {
+                log.error("Can't parse recipient address: {}", recipientString);
+                throw new RuntimeException(e);
+            }
+            final List<InternetAddress> recipients = Arrays.asList(internetAddresses);
 
-        email.setTo(recipients);
-        email.setMsg(letter.getText());
-        email.send();
-        log.info("[{}] sent mail to {}", user.getName(), recipients);
+            Email email = preConfigureEmail(user.getName(), user.getFullName());
+            try {
+                email.setTo(recipients);
+                email.setMsg(letter.getText());
+            } catch (EmailException e) {
+                log.error("Can't create email to: {} with body from letter:{}", recipientString, letter.toString());
+                throw new RuntimeException(e);
+            }
+
+            try {
+                email.send();
+            } catch (EmailException e) {
+                log.error("Can't send email to: {}", recipientString);
+                throw new RuntimeException(e);
+            }
+            log.info("[{}] sent mail to {}", user.getName(), recipients);
+        } catch (Exception e) {
+            mailboxService.setNotDelivered(letter, user.getName());
+        }
     }
 
     @RabbitListener(queues = "haraka.emails")
@@ -56,11 +79,7 @@ public class SmtpService {
 
         MimeMessage mimeMessage = parseMimeMessage(message);
         ReceiveEmailDto receiveEmail = parseContent(mimeMessage);
-
-        if (Objects.isNull(receiveEmail)) {
-            return;
-        }
-
+        if (Objects.isNull(receiveEmail)) return;
         final List<User> recipients = findRecipients(receiveEmail.getRecipients());
 
         recipients.forEach(recipient -> mailboxService.put(receiveEmail.toLetter(), recipient.getName()));
