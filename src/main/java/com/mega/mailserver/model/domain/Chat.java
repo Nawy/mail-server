@@ -3,6 +3,7 @@ package com.mega.mailserver.model.domain;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,5 +20,5 @@ public class Chat {
     private int amountNew;
 
     @Builder.Default
-    private List<Letter> messages = emptyList();
+    private List<Letter> messages = new ArrayList<>();
 }
