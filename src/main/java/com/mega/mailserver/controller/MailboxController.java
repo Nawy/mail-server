@@ -38,6 +38,7 @@ public class MailboxController {
         final boolean isValidEmail = emailValidator.isValid(letter.getAddress());
         if (!isValidEmail) throw new BadRequestException("bad email set");
 
+        letter.setAddress(letter.getAddress().toLowerCase());
         final User user = authService.getUser();
         try {
             postService.send(letter, user);
