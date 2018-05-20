@@ -21,6 +21,7 @@ public class PostService {
 
     public void send(final Letter letter, final User user) throws AddressException {
 
+        final EmailAddress fromAddress = new EmailAddress(user.getName(), emailProperties.getDomain());
         final EmailAddress toAddress = new EmailAddress(letter.getAddress());
         final String recipientDomain = toAddress.getDomain();
 
@@ -30,9 +31,11 @@ public class PostService {
 
         mailboxService.put(outboxEmail, user.getName());
 
-        if (!isLocalDomain(recipientDomain)) smtpService.send(letter, user);
+        if (!isLocalDomain(recipientDomain)) {
+            smtpService.send(letter, user);
+        }
         else {
-            letter.setAddress(user.getName());
+            letter.setAddress(fromAddress.getAddress().toUnicodeString());
             letter.setDirection(LetterDirection.INBOX);
             mailboxService.put(letter, toAddress.getName());
         }
