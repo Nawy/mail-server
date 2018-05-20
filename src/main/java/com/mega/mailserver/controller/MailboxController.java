@@ -3,6 +3,7 @@ package com.mega.mailserver.controller;
 import com.mega.mailserver.model.SecurityRole;
 import com.mega.mailserver.model.domain.Letter;
 import com.mega.mailserver.model.domain.User;
+import com.mega.mailserver.model.dto.ChatDto;
 import com.mega.mailserver.model.exception.BadRequestException;
 import com.mega.mailserver.service.MailboxService;
 import com.mega.mailserver.service.PostService;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.internet.AddressException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Secured(SecurityRole.USER)
 @RestController
@@ -55,6 +58,16 @@ public class MailboxController {
     public Set<String> getChatNames() {
         final User user = authService.getUser();
         return mailboxService.getChatNames(user.getName(), false);
+    }
+
+    @Secured(SecurityRole.USER)
+    @GetMapping("/spam/chats")
+    public List<ChatDto> getChats() {
+        final User user = authService.getUser();
+        return mailboxService.getChats(user.getName(), true)
+                .stream()
+                .map(ChatDto::valueOf)
+                .collect(Collectors.toList());
     }
 
     @Secured(SecurityRole.USER)

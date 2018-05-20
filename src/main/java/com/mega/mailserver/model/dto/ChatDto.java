@@ -1,10 +1,9 @@
 package com.mega.mailserver.model.dto;
 
-import com.mega.mailserver.model.domain.Letter;
+import com.mega.mailserver.model.domain.Chat;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Setter
 @Getter
@@ -15,5 +14,12 @@ public class ChatDto {
     private String name;
     private LocalDateTime lastDeliveryDate;
     private int amountNew;
-    private List<Letter> messages;
+
+    public static ChatDto valueOf(Chat chat) {
+        return ChatDto.builder()
+                .name(chat.getName())
+                .amountNew(chat.getAmountNew())
+                .lastDeliveryDate(chat.getLastDeliveryDate())
+                .build();
+    }
 }

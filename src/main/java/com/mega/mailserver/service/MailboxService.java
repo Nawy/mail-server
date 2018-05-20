@@ -3,6 +3,7 @@ package com.mega.mailserver.service;
 import com.mega.mailserver.model.domain.Chat;
 import com.mega.mailserver.model.domain.Letter;
 import com.mega.mailserver.model.domain.Mailbox;
+import com.mega.mailserver.model.dto.ChatDto;
 import com.mega.mailserver.repository.MailboxRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,12 @@ public class MailboxService {
                 );
 
         return Objects.isNull(chat) ? Collections.emptyList() : chat.getMessages();
+    }
+
+    public List<Chat> getChats(final String userName, boolean isSpam) {
+        final Mailbox mailbox = getMailbox(userName);
+        if (isNull(mailbox)) return Collections.emptyList();
+        return isSpam ? mailbox.getSpam() : mailbox.getContacts();
     }
 
     public Set<String> getChatNames(final String userName, final boolean spam) {
