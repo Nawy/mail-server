@@ -87,6 +87,6 @@ spring:
 email:
   domain: ermolaev.am
   host: postfix
-  port: 567
+  port: 25
   username: sendserver
   password: 13SaintMonkeys
