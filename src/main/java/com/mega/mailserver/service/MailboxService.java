@@ -3,6 +3,7 @@ package com.mega.mailserver.service;
 import com.mega.mailserver.model.domain.Chat;
 import com.mega.mailserver.model.domain.Letter;
 import com.mega.mailserver.model.domain.Mailbox;
+import com.mega.mailserver.model.enums.LetterDirection;
 import com.mega.mailserver.repository.MailboxRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
+import static com.mega.mailserver.model.enums.LetterDirection.INBOX;
 import static java.util.Objects.isNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -31,7 +33,7 @@ public class MailboxService {
                                 .orElse(null)
                 );
 
-        if(!Objects.isNull(chat)) {
+        if (!Objects.isNull(chat)) {
             chat.setAmountNew(0);
             repository.save(mailbox);
         }
@@ -114,7 +116,8 @@ public class MailboxService {
         if (!isNull(contact)) {
             contact.getMessages().add(letter);
             contact.setLastDeliveryDate(letter.getDeliveryTime());
-            contact.setAmountNew(contact.getAmountNew() + 1);
+            if (letter.getDirection() == INBOX)
+                contact.setAmountNew(contact.getAmountNew() + 1);
         } else {
             Chat spam = getChatByAddress(address, mailbox.getSpam())
                     .orElse(null);
@@ -129,7 +132,8 @@ public class MailboxService {
 
             spam.getMessages().add(letter);
             spam.setLastDeliveryDate(letter.getDeliveryTime());
-            spam.setAmountNew(spam.getAmountNew() + 1);
+            if (letter.getDirection() == INBOX)
+                spam.setAmountNew(spam.getAmountNew() + 1);
         }
 
         return mailbox;
