@@ -27,7 +27,7 @@ public class UserController {
     @PostMapping
     public UserDto insert(@RequestBody UserDto user) {
         if(StringUtils.isBlank(user.getName())) throw new BadRequestException("Name is empty");
-        user.setName(user.getName().toLowerCase());
+        user.setName(user.getName().trim().toLowerCase());
 
         boolean isValid = EmailUtils.isValidEmailName(user.getName());
         if (!isValid) throw new ForbiddenException("incorrect email format!");
@@ -44,7 +44,7 @@ public class UserController {
     @PutMapping
     public UserDto update(@RequestBody UserDto user) {
         if(StringUtils.isBlank(user.getName())) throw new BadRequestException("Name is empty");
-        user.setName(user.getName().toLowerCase());
+        user.setName(user.getName().trim().toLowerCase());
 
         final User existedUser = userService.get(user.getName());
         if (Objects.isNull(existedUser)) {
@@ -57,7 +57,7 @@ public class UserController {
     @Secured(SecurityRole.USER)
     @GetMapping("/{name}")
     public UserDto getInfo(@PathVariable("name") String name) {
-        final User user = getUser(name);
+        final User user = getUser(name.trim().toLowerCase());
         return UserDto.valueOf(user);
     }
 
@@ -70,13 +70,13 @@ public class UserController {
 
     @GetMapping("/{name}/name")
     public UserDto get(@PathVariable("name") String name) {
-        final User user = getUser(name);
+        final User user = getUser(name.trim().toLowerCase());
         return UserDto.nameValueOf(user);
     }
 
     private User getUser(@PathVariable("name") String name) {
         if (StringUtils.isBlank(name)) throw new BadRequestException("Empty request");
-        String lowerCaseName = name.toLowerCase();
+        String lowerCaseName = name.trim().toLowerCase();
 
         final User user = userService.get(lowerCaseName);
 
