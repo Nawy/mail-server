@@ -22,7 +22,7 @@ public class EmailUtilsTest {
 
     @Test
     public void testInvalidEmailName() {
-        List<String> emailName = asList("мама", "orck@mail", "@mack.ru", "orda@lolka", "nigga_nig");
+        List<String> emailName = asList("мама", "orck@mail", "@mack.ru", "orda@lolka", "nita..nit",".nitanit");
 
         List<Boolean> answers = emailName.stream().map(EmailUtils::isValidEmail).collect(Collectors.toList());
 
@@ -40,7 +40,18 @@ public class EmailUtilsTest {
 
     @Test
     public void testInvalidEmail() {
-        List<String> emailName = asList("nigga_nig@mail.ru","мама@mail.ru", "orck@mail@email.ru", "@mack.ru", "orda@lolka");
+        List<String> emailName = asList(
+                "nit()@mail.ru",
+                "nit..nig@mail.ru",
+                "nit@.mail.ru",
+                "мама@mail.ru",
+                "orck@mail@email.ru",
+                "orck@.mail.ru",
+                "orck@mail.ru.",
+                ".orck@mail.ru",
+                "@mack.ru",
+                "orda@lolka"
+        );
 
         List<Boolean> answers = emailName.stream().map(EmailUtils::isValidEmail).collect(Collectors.toList());
 
