@@ -8,6 +8,7 @@ import com.mega.mailserver.model.exception.ForbiddenException;
 import com.mega.mailserver.model.exception.NotFoundException;
 import com.mega.mailserver.service.UserService;
 import com.mega.mailserver.service.security.AuthService;
+import com.mega.mailserver.util.EmailUtils;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.annotation.Secured;
@@ -27,6 +28,9 @@ public class UserController {
     public UserDto insert(@RequestBody UserDto user) {
         if(StringUtils.isBlank(user.getName())) throw new BadRequestException("Name is empty");
         user.setName(user.getName().toLowerCase());
+
+        boolean isValid = EmailUtils.isValidEmailName(user.getName());
+        if (!isValid) throw new ForbiddenException("incorrect email format!");
 
         final User existedUser = userService.get(user.getName());
         if (Objects.nonNull(existedUser)) {
