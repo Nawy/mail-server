@@ -16,12 +16,14 @@ public class ReceiveEmailDto {
     private List<InternetAddress> cc;
     private List<InternetAddress> bcc;
     private String from;
+    private String subject;
     private String text;
     private String htmlText;
 
     public Letter toLetter() {
         return Letter.builder()
                 .address(from)
+                .subject(subject)
                 .text(text)
                 .htmlText(htmlText)
                 .direction(LetterDirection.INBOX)

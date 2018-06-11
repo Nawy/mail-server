@@ -144,9 +144,18 @@ public class SmtpService {
             throw new RuntimeException(e);
         }
 
+        String subject;
+        try {
+            subject = parser.getSubject();
+        } catch (Exception e) {
+            log.error("Cannot get subject", e);
+            throw new RuntimeException(e);
+        }
+
         return ReceiveEmailDto.builder()
                 .recipients(to.stream().map(addr -> (InternetAddress)addr).collect(Collectors.toList()))
                 .from(from)
+                .subject(subject)
                 .text(text)
                 .htmlText(htmlText)
                 .build();

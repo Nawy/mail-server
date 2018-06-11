@@ -22,6 +22,7 @@ public class Letter {
     private List<String> cc;
     private List<String> bcc;
     private LetterDirection direction;
+    private String subject;
     private String text;
     private String htmlText;
     private LocalDateTime seenTime;
