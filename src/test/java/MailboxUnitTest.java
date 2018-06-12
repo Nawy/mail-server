@@ -227,7 +227,7 @@ public class MailboxUnitTest {
         final Chat chat = mailboxService.getChatByAddress(CHAT_NAME_4, resultMailbox.getSpam()).orElse(null);
 
         assertThat(chat).isNotNull();
-        assertThat(chat.getAmountNew()).isEqualTo(1);
+        assertThat(chat.getAmountNew()).isEqualTo(0); // not new!
         assertThat(chat.getLastDeliveryDate()).isEqualTo(deliveryTime);
         assertThat(chat.getMessages()).isNotEmpty();
         assertThat(chat.getMessages()).extracting("address").contains(CHAT_NAME_4);
@@ -260,7 +260,7 @@ public class MailboxUnitTest {
         final Chat chat = mailboxService.getChatByAddress(CHAT_NAME_4, resultMailbox.getContacts()).orElse(null);
 
         assertThat(chat).isNotNull();
-        assertThat(chat.getAmountNew()).isEqualTo(1);
+        assertThat(chat.getAmountNew()).isEqualTo(0); // not new
         assertThat(chat.getLastDeliveryDate()).isEqualTo(deliveryTime);
         assertThat(chat.getMessages()).isNotEmpty();
         assertThat(chat.getMessages()).extracting("address").contains(CHAT_NAME_4);
