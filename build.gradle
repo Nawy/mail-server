@@ -1,7 +1,6 @@
 buildscript {
 	ext {
 		springBootVersion = '2.0.0.RELEASE'
-		gradleDockerVersion = "1.2"
 	}
 	repositories {
 		mavenCentral()
@@ -11,8 +10,7 @@ buildscript {
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
 		classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
-		classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.4.21"
-		classpath("se.transmode.gradle:gradle-docker:${gradleDockerVersion}")
+		classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.5.1"
 	}
 }
 
@@ -27,34 +25,17 @@ apply plugin: 'org.springframework.boot'
 apply plugin: "io.spring.dependency-management"
 apply plugin: 'propdeps'
 apply plugin: 'propdeps-idea'
-apply plugin: 'docker'
 
-/*
+
 bootJar {
-	baseName = 'mailserver'
-	version =  '1.0'
+	baseName = 'mail-server'
 	exclude ("logback-test.xml")
 }
-*/
 
 group = 'com.mega'
 version = null
 sourceCompatibility = 1.8
 
-
-task buildDocker(type: Docker) {
-	baseImage = 'openjdk:8-jre-alpine'
-	push = project.hasProperty('push')
-	tag = 'mail-server'
-	setEnvironment("profile", "container")
-	addFile {
-		from jar
-		rename { 'app.jar' }
-	}
-	defaultCommand(['java', '-Xms256m', '-Xmx512m', '-jar', '/app.jar', '--spring.profiles.active=${profile}'])
-}
-
-buildDocker.dependsOn(build)
 
 repositories {
 	mavenCentral()
@@ -94,4 +75,6 @@ dependencies {
 	compile('com.sun.mail:javax.mail:1.6.1')
 
 	compileOnly('org.projectlombok:lombok')
+
+	compile("org.springframework.boot:spring-boot-starter-websocket")
 }
