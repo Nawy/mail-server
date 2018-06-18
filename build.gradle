@@ -84,6 +84,7 @@ dependencies {
 	compile 'commons-validator:commons-validator:1.6'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 
+	compile 'org.springframework.boot:spring-boot-starter-websocket'
 	//common
 	compile('com.google.guava:guava:19.0')
 	compile('org.apache.commons:commons-lang3:3.7')
